@@ -29,13 +29,13 @@ export const userLogin = async (username: string, password: string) => {
   const userExists = await userRepository.findUsername(username);
 
   if (!userExists) {
-    throw new GlobalError(401, "USER_DOES_NOT_EXISTS");
+    throw new GlobalError(401, "INVALID_CREDENTIALS");
   }
 
   const matchPassword = await bcrypt.compare(password, userExists.password);
 
   if (!matchPassword) {
-    throw new GlobalError(401, "INCORRECT_PASSWORD");
+    throw new GlobalError(401, "INVALID_CREDENTIALS");
   }
 
   const token = jwt.sign(
