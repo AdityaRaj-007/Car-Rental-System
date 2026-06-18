@@ -23,10 +23,7 @@ export const createBooking = async ({
   );
 };
 
-export const getUserBookings = async ({
-  user,
-  params,
-}: GetBooking): Promise<Booking | Booking[] | BookingSummary> => {
+export const getUserBookings = async ({ user, params }: GetBooking) => {
   const bookingId = params.bookingId;
   const summary = params.summary;
 
@@ -35,10 +32,14 @@ export const getUserBookings = async ({
     if (!booking || booking.userId !== user.id) {
       throw new GlobalError(404, "BOOKING_NOT_FOUND");
     }
-    return booking;
+    const { createdAt, userId, ...data } = booking;
+    return {
+      ...data,
+      totalAmount: booking.rentPerDay.toNumber() * booking.days,
+    };
   }
 
-  if (summary === true) {
+  if (summary === "true") {
     const bookings = await bookingRepository.getUserBookings(user.id);
 
     const totalSpending = bookings.reduce((accumulator, booking) => {
@@ -52,7 +53,17 @@ export const getUserBookings = async ({
     };
   }
 
-  return await bookingRepository.getUserBookings(user.id);
+  const allBookings = await bookingRepository.getUserBookings(user.id);
+
+  const bookingData = allBookings.map((booking) => {
+    const { createdAt, userId, ...data } = booking;
+    return {
+      ...data,
+      totalAmount: booking.days * booking.rentPerDay.toNumber(),
+    };
+  });
+
+  return bookingData;
 };
 
 export const updateBookingDetails = async ({
@@ -75,8 +86,10 @@ export const updateBookingDetails = async ({
     payload,
   });
 
+  const { createdAt, userId, ...data } = details;
+
   return {
-    ...details,
+    ...data,
     totalCost: details.days * details.rentPerDay.toNumber(),
   };
 };

@@ -21,7 +21,7 @@ export type GetBooking = {
   };
   params: {
     bookingId?: string;
-    summary?: boolean;
+    summary?: string;
   };
 };
 

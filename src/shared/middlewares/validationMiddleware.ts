@@ -33,6 +33,7 @@ export const validate =
       next();
     } catch (err) {
       console.log(err);
+      console.log("Validation error");
       return next(new GlobalError(400, "INVALID_REQUEST"));
     }
   };

@@ -8,6 +8,7 @@ import {
 } from "./booking.schema";
 import {
   CreateBooking,
+  DeleteBooking,
   GetBookings,
   UpdateBookingDetailsAndStatus,
 } from "./booking.controller";
@@ -22,6 +23,6 @@ router.put(
   UpdateBookingDetailsAndStatus,
 );
 
-router.delete("/:bookingId", validate(DeleteBookingSchema));
+router.delete("/:bookingId", validate(DeleteBookingSchema), DeleteBooking);
 
 export default router;
